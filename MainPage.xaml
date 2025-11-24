@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DormitoryMaui.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:model="clr-namespace:DormitoryMaui.Models"
+    Title="Диспетчер JSON - Гуртожиток">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Верхня панель -->
+        <VerticalStackLayout Grid.Row="0"
+                             Padding="10"
+                             Spacing="8">
+
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Відкрити JSON" Clicked="OnOpenJsonClicked" />
+                <Button Text="Зберегти JSON" Clicked="OnSaveJsonClicked" />
+                <Button Text="Додати" Clicked="OnAddClicked" />
+                <Button Text="Редагувати" Clicked="OnEditClicked" />
+                <Button Text="Видалити" Clicked="OnDeleteClicked" />
+                <Button Text="Про програму" Clicked="OnAboutClicked" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="8">
+                <Picker x:Name="SearchPicker" WidthRequest="150">
+                    <Picker.Items>
+                        <x:String>ПІБ</x:String>
+                        <x:String>Факультет</x:String>
+                        <x:String>Курс</x:String>
+                        <x:String>Кімната</x:String>
+                    </Picker.Items>
+                </Picker>
+
+                <Entry x:Name="SearchEntry"
+                       WidthRequest="250"
+                       Placeholder="Значення для пошуку" />
+
+                <Button Text="Пошук" Clicked="OnSearchClicked" />
+                <Button Text="Скинути" Clicked="OnResetSearchClicked" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Таблиця -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,*"
+              Padding="10">
+
+            <!-- Заголовок -->
+            <Grid ColumnDefinitions="Auto,*,*,Auto,Auto,Auto,Auto,Auto"
+                  Padding="5"
+                  BackgroundColor="#eeeeee">
+                <Label Text="ID" FontAttributes="Bold" Margin="3" />
+                <Label Grid.Column="1" Text="ПІБ" FontAttributes="Bold" Margin="3" />
+                <Label Grid.Column="2" Text="Факультет" FontAttributes="Bold" Margin="3" />
+                <Label Grid.Column="3" Text="Курс" FontAttributes="Bold" Margin="3" />
+                <Label Grid.Column="4" Text="Кімната" FontAttributes="Bold" Margin="3" />
+                <Label Grid.Column="5" Text="Блок" FontAttributes="Bold" Margin="3" />
+                <Label Grid.Column="6" Text="Заселення" FontAttributes="Bold" Margin="3" />
+                <Label Grid.Column="7" Text="Виселення" FontAttributes="Bold" Margin="3" />
+            </Grid>
+
+            <CollectionView x:Name="StudentsCollection"
+                Grid.Row="1"
+                VerticalOptions="FillAndExpand"
+                SelectionMode="Single"
+                ItemsSource="{Binding}">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Student">
+                        <Grid ColumnDefinitions="Auto,*,*,Auto,Auto,Auto,Auto,Auto"
+                              Padding="5">
+                            <Label Text="{Binding Id}" Margin="3" />
+                            <Label Grid.Column="1" Text="{Binding PIB}" Margin="3" />
+                            <Label Grid.Column="2" Text="{Binding Faculty}" Margin="3" />
+                            <Label Grid.Column="3" Text="{Binding Course}" Margin="3" />
+                            <Label Grid.Column="4" Text="{Binding Room}" Margin="3" />
+                            <Label Grid.Column="5" Text="{Binding Block}" Margin="3" />
+                            <Label Grid.Column="6"
+                                   Text="{Binding CheckInDate, StringFormat='{}{0:dd.MM.yyyy}'}"
+                                   Margin="3" />
+                            <Label Grid.Column="7"
+                                   Text="{Binding CheckOutDate, StringFormat='{}{0:dd.MM.yyyy}'}"
+                                   Margin="3" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+    </Grid>
+</ContentPage>

@@ -1,0 +1,3 @@
+<ItemGroup>
+	<MauiAsset Include="Resources\raw\**" />
+</ItemGroup>

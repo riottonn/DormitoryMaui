@@ -1,0 +1,33 @@
+<ContentPage
+    x:Class="DormitoryMaui.AboutPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="About">
+
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="15">
+
+            <Label Text="Dormitory JSON Manager"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <Label Text="This application is created as a lab project for managing JSON data related to student dormitory information."
+                   FontSize="18"
+                   HorizontalOptions="Center" />
+
+            <VerticalStackLayout Spacing="5">
+
+                <Label Text="Developer: Daria Holub" FontSize="18" />
+                <Label Text="Group: K-24" FontSize="18" />
+                <Label Text="Course: 2" FontSize="18" />
+                <Label Text="Year: 2025" FontSize="18" />
+            </VerticalStackLayout>
+
+            <Label Text="The program allows you to load, edit and save student data stored in JSON format."
+                   FontSize="18" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
