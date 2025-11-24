@@ -1,0 +1,48 @@
+<ContentPage
+    x:Class="DormitoryMaui.StudentPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Student Editor">
+
+	<ScrollView Padding="20">
+		<VerticalStackLayout Spacing="15">
+
+			<Label Text="Edit Student"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+			<Label Text="Full Name" FontSize="18" />
+			<Entry x:Name="PibEntry" />
+			<Label Text="Faculty" FontSize="18" />
+			<Entry x:Name="FacultyEntry" />
+			<Label Text="Department" FontSize="18" />
+			<Entry x:Name="DepartmentEntry" />
+			<Label Text="Course" FontSize="18" />
+			<Entry x:Name="CourseEntry" Keyboard="Numeric" />
+			<Label Text="Room" FontSize="18" />
+			<Entry x:Name="RoomEntry" Keyboard="Numeric" />
+			<Label Text="Block" FontSize="18" />
+			<Entry x:Name="BlockEntry" Keyboard="Numeric" />
+			<Label Text="Check-in Date" FontSize="18" />
+			<DatePicker x:Name="CheckInPicker" />
+			<Label Text="Check-out Date" FontSize="18" />
+			<DatePicker x:Name="CheckOutPicker" />
+			<HorizontalStackLayout Spacing="10">
+
+				<Button Text="Save"
+                        x:Name="SaveBtn"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        Clicked="OnSaveClicked" />
+
+				<Button Text="Cancel"
+                        BackgroundColor="#F44336"
+                        TextColor="White"
+                        Clicked="OnCancelClicked" />
+
+			</HorizontalStackLayout>
+
+		</VerticalStackLayout>
+	</ScrollView>
+
+</ContentPage>
