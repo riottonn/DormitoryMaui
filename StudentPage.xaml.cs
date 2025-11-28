@@ -1,11 +1,12 @@
-﻿using DormitoryMaui.Models;
+using DormitoryMaui.Models;
 
 namespace DormitoryMaui;
 
 public partial class StudentPage : ContentPage
 {
     private Student _student;
-    public bool Saved { get; private set; }
+    
+    public event EventHandler<Student> OnStudentSaved;
 
     public StudentPage(Student student)
     {
@@ -19,11 +20,9 @@ public partial class StudentPage : ContentPage
         PibEntry.Text = _student.PIB;
         FacultyEntry.Text = _student.Faculty;
         DepartmentEntry.Text = _student.Department;
-
         CourseEntry.Text = _student.Course.ToString();
         RoomEntry.Text = _student.Room.ToString();
         BlockEntry.Text = _student.Block.ToString();
-
         CheckInPicker.Date = _student.CheckInDate;
         CheckOutPicker.Date = _student.CheckOutDate;
     }
@@ -49,17 +48,15 @@ public partial class StudentPage : ContentPage
         _student.Course = course;
         _student.Room = room;
         _student.Block = block;
-
         _student.CheckInDate = CheckInPicker.Date;
         _student.CheckOutDate = CheckOutPicker.Date;
+        OnStudentSaved?.Invoke(this, _student);
 
-        Saved = true;
         await Navigation.PopAsync();
     }
 
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        Saved = false;
         await Navigation.PopAsync();
     }
 }
