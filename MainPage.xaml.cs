@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using DormitoryMaui.Models;
 using DormitoryMaui.Services;
 
@@ -14,8 +14,6 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
-        BindingContext = _students;
-
         StudentsCollection.ItemsSource = _students;
         SearchPicker.SelectedIndex = 0;
     }
@@ -24,17 +22,18 @@ public partial class MainPage : ContentPage
     {
         try
         {
-            var options = new PickOptions
+            var result = await FilePicker.PickAsync(new PickOptions
             {
                 PickerTitle = "Оберіть JSON",
                 FileTypes = new FilePickerFileType(
                     new Dictionary<DevicePlatform, IEnumerable<string>>
                     {
-                        { DevicePlatform.WinUI, new[] { ".json" } }
+                        { DevicePlatform.WinUI, new[] { ".json" } },
+                        { DevicePlatform.Android, new[] { "application/json" } },
+                        { DevicePlatform.iOS, new[] { "public.json" } }
                     })
-            };
+            });
 
-            var result = await FilePicker.PickAsync(options);
             if (result == null)
                 return;
 
@@ -54,51 +53,62 @@ public partial class MainPage : ContentPage
 
     private async void OnSaveJsonClicked(object sender, EventArgs e)
     {
-        if (_currentFilePath == null)
-            _currentFilePath = Path.Combine(FileSystem.AppDataDirectory, "students.json");
+        try
+        {
+            if (_currentFilePath == null)
+                _currentFilePath = Path.Combine(FileSystem.AppDataDirectory, "students.json");
 
-        JsonStorage.Save(_currentFilePath, _students.ToList());
-        await DisplayAlert("OK", "Файл збережено.", "OK");
+            JsonStorage.Save(_currentFilePath, _students.ToList());
+
+            await DisplayAlert("Успіх", "Файл збережено.", "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Помилка збереження", ex.Message, "OK");
+        }
     }
 
     private async void OnAddClicked(object sender, EventArgs e)
     {
-        var student = new Student
+        var newStudent = new Student
         {
             Id = _students.Any() ? _students.Max(s => s.Id) + 1 : 1,
             CheckInDate = DateTime.Today,
             CheckOutDate = DateTime.Today.AddMonths(6)
         };
 
-        var page = new StudentPage(student);
-        await Navigation.PushAsync(page);
+        var page = new StudentPage(newStudent);
 
-        if (page.Saved)
+        page.OnStudentSaved += (s, student) =>
         {
             _students.Add(student);
             _allStudents = _students.ToList();
-        }
+
+            StudentsCollection.ItemsSource = null;
+            StudentsCollection.ItemsSource = _students;
+        };
+
+        await Navigation.PushAsync(page);
     }
 
     private async void OnEditClicked(object sender, EventArgs e)
     {
-        if (StudentsCollection.SelectedItem is not Student student)
+        if (StudentsCollection.SelectedItem is not Student selected)
         {
             await DisplayAlert("Увага", "Оберіть студента.", "OK");
             return;
         }
 
-        var page = new StudentPage(student);
-        await Navigation.PushAsync(page);
+        var page = new StudentPage(selected);
 
-        if (page.Saved)
+        page.OnStudentSaved += (s, student) =>
         {
-            // ВАЖЛИВО: Перемалювати список
+            _allStudents = _students.ToList();
             StudentsCollection.ItemsSource = null;
             StudentsCollection.ItemsSource = _students;
+        };
 
-            _allStudents = _students.ToList();
-        }
+        await Navigation.PushAsync(page);
     }
 
     private async void OnDeleteClicked(object sender, EventArgs e)
@@ -109,8 +119,7 @@ public partial class MainPage : ContentPage
             return;
         }
 
-        bool yes = await DisplayAlert("Підтвердження",
-            $"Видалити {student.PIB}?", "Так", "Ні");
+        bool yes = await DisplayAlert("Підтвердження", $"Видалити {student.PIB}?", "Так", "Ні");
 
         if (yes)
         {
@@ -131,14 +140,20 @@ public partial class MainPage : ContentPage
 
         IEnumerable<Student> q = _allStudents;
 
-        switch (SearchPicker.SelectedItem)
+        if (SearchPicker.SelectedItem == null)
+        {
+             await DisplayAlert("Помилка", "Оберіть критерій пошуку.", "OK");
+             return;
+        }
+
+        switch (SearchPicker.SelectedItem.ToString())
         {
             case "ПІБ":
-                q = q.Where(s => s.PIB.Contains(value, StringComparison.OrdinalIgnoreCase));
+                q = q.Where(s => s.PIB != null && s.PIB.Contains(value, StringComparison.OrdinalIgnoreCase));
                 break;
 
             case "Факультет":
-                q = q.Where(s => s.Faculty.Contains(value, StringComparison.OrdinalIgnoreCase));
+                q = q.Where(s => s.Faculty != null && s.Faculty.Contains(value, StringComparison.OrdinalIgnoreCase));
                 break;
 
             case "Курс":
